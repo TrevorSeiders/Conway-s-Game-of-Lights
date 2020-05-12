@@ -4,28 +4,43 @@ using UnityEngine;
 
 public class GOL_Entity : MonoBehaviour
 {
-    bool isAlive = false;
-    GameObject[] neighbors;
+    public bool isAlive = false;
+    GameObject[] neighbors = new GameObject[0];
 
-    float alpha = 0.0f;
+    public float alpha = 0.0f;
     Color color = Color.black;
     Material mat;
+
+    // Delay between calls to update the game
+    public float delayTime = 1.0f;
+    public float timer = 0.0f;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        mat = gameObject.GetComponent<Material>();
+        mat = gameObject.GetComponent<Renderer>().material;
+        AssignRandomColor();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        timer += Time.deltaTime;
+
+        if (timer >= delayTime)
+        {
+            timer = 0f;
+            UpdateStatus();
+        }
     }
 
 
-    void UpdateStatus()
+    /// <summary>
+    /// Performs the necessary GoL checks and updates
+    /// the status of the entity accordingly.
+    /// </summary>
+    public void UpdateStatus()
     {
         int numLivingNeighbors = 0;
         foreach ( GameObject n in neighbors )
@@ -48,8 +63,7 @@ public class GOL_Entity : MonoBehaviour
             if ( numLivingNeighbors == 3 )
             {
                 isAlive = true;
-                color = new Color(Random.value, Random.value, Random.value);
-                mat.color = color;
+                AssignRandomColor();
             }
         }
 
@@ -59,7 +73,28 @@ public class GOL_Entity : MonoBehaviour
         }
         else
         {
-            alpha = 0.0f;
+            alpha -= 0.05f;
         }
+    }
+
+
+    /// <summary>
+    /// Assigns a random color to the entity's material.
+    /// </summary>
+    public void AssignRandomColor()
+    {
+        color = new Color(Random.value, Random.value, Random.value, alpha);
+        Material newMat = mat;
+        newMat.color = color;
+        mat = newMat;
+    }
+
+
+    public void AssignOpacity()
+    {
+        Material newMat = mat;
+        color.a = alpha;
+        mat.color = color;
+        mat = newMat;
     }
 }
