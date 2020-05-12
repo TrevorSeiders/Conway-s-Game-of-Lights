@@ -5,14 +5,14 @@ using UnityEngine;
 public class GOL_Entity : MonoBehaviour
 {
     public bool isAlive = false;
-    GameObject[] neighbors = new GameObject[0];
+    public List<GameObject> neighbors = new List<GameObject>();
 
     public float alpha = 0.0f;
     Color color = Color.black;
     Material mat;
 
     // Delay between calls to update the game
-    public float delayTime = 1.0f;
+    float delayTime = 0.2f;
     public float timer = 0.0f;
 
 
@@ -63,18 +63,19 @@ public class GOL_Entity : MonoBehaviour
             if ( numLivingNeighbors == 3 )
             {
                 isAlive = true;
-                AssignRandomColor();
             }
         }
 
-        if ( isAlive )
+        if ( isAlive && alpha < 1.0f )
         {
-            alpha += 0.1f;
+            alpha += 0.25f;
         }
-        else
+        else if (alpha > 0)
         {
-            alpha -= 0.05f;
+            alpha = 0;
         }
+
+        AssignOpacity();
     }
 
 
